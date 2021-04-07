@@ -77,8 +77,8 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
                 'LesHouches:setLifetime = 2',
                 'ParticleDecays:allowPhotonRadiation = on',
                 # Set decay channel of dark photon to chi2+chi1
-                '32:mayDecay = true',
-                '32:oneChannel = 1 1.0 0 1000023 1000022',
+                #'32:mayDecay = true',
+                #'32:oneChannel = 1 1.0 0 1000023 1000022',
                 # Set decay length of chi2
                 '1000023:tau0 = 1',
                 # Set decay channels of chi2 (only mu or e+mu)

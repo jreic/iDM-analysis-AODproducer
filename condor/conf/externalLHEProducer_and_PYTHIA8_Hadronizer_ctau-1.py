@@ -39,6 +39,8 @@ from Configuration.Generator.MCTunes2017.PythiaCP5Settings_cfi import *
 #    scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
 #)
 
+neutralino2_ctau = 1 # mm
+neutralino2_width = 0.0197e-11 / float(neutralino2_ctau)
 
 # Hadronizer configuration
 generator = cms.EDFilter("Pythia8HadronizerFilter",
@@ -64,6 +66,12 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
                 'JetMatching:nQmatch = 4', #5 for 5-flavour scheme (matching of b-quarks)
                 'JetMatching:nJetMax = 2', #number of partons in born matrix element for highest multiplicity
                 'JetMatching:doShowerKt = off', #off for MLM matching, turn on for shower-kT matching
+                '6:m0 = 172.5', 
+                '24:mMin = 0.1', 
+                '23:onMode = off', 
+                '23:onIfAny = 13', 
+                '23:mMin = 0.1', 
+                'Check:abortIfVeto = on'
                 ),
             processParameters = cms.vstring(
                 'SLHA:keepSM = on',
@@ -72,19 +80,30 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
                 'SLHA:allowUserOverride = on',
                 'RHadrons:allow = on',
                 'RHadrons:allowDecay = on',
-                'ParticleDecays:limitTau0 = on',
-                'ParticleDecays:tau0Max = 1000.1',
+                'ParticleDecays:limitTau0 = off',
+                #'ParticleDecays:tau0Max = 1000.1',
                 'LesHouches:setLifetime = 2',
                 'ParticleDecays:allowPhotonRadiation = on',
                 # Set decay channel of dark photon to chi2+chi1
-                '32:mayDecay = true',
-                '32:oneChannel = 1 1.0 0 1000023 1000022',
-                # Set decay length of chi2
-                '1000023:tau0 = 1',
+                #'32:mayDecay = true',
+                #'32:oneChannel = 1 1.0 0 1000023 1000022',
                 # Set decay channels of chi2 (only mu or e+mu)
-                '1000023:oneChannel = 1 1.0 0 1000022 13 -13'#,
+                #'1000023:mayDecay = true',
+                #'1000023:oneChannel = 1 1.0 0 1000022 13 -13',
                 #'1000023:oneChannel = 1 0.5 0 1000022 13 -13',
                 #'1000023:addChannel = 1 0.5 0 1000022 11 -11'	
+                #'1000023:addChannel = 1 0.5 0 1000022 11 -11',
+                'SUSY:qqbar2chi+-chi0 = on',
+                'SUSY:idA = 1000023',
+                'SUSY:idB = 1000024',
+                # Set decay length of chi2 and chi1pm
+                '1000023:tau0 = %f' % neutralino2_ctau,
+                #'1000024:tau0 = 1', # FIXME this could be improved! we should decay it too...
+                'Tune:preferLHAPDF = 2', 
+                'Main:timesAllowErrors = 10000', 
+                'Check:epTolErr = 0.01', 
+                'Beams:setProductionScalesFromLHEF = off', 
+                #'SLHA:useDecayTable = on'
                 ),
             parameterSets = cms.vstring('pythia8CommonSettings',
                 'pythia8CP5Settings',
@@ -93,7 +112,8 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
                 'JetMatchingParameters',
                 'processParameters',
                 )
-            )
+            ),
+            SLHATableForPythia8 = cms.string('\n#\nBLOCK MASS  # Mass Spectrum\n# PDG code           mass       particle\n        35     1.00000000E+05\n        36     1.00000000E+05\n        37     1.00000000E+05\n        6      1.72500000E+02\n   1000001     1.00000000E+05    # ~d_L\n   2000001     1.00000000E+05   # ~d_R\n   1000002     1.00000000E+05    # ~u_L\n   2000002     1.00000000E+05   # ~u_R\n   1000003     1.00000000E+05    # ~s_L\n   2000003     1.00000000E+05   # ~s_R\n   1000004     1.00000000E+05    # ~c_L\n   2000004     1.00000000E+05   # ~c_R\n   1000005     1.00000000E+05   # ~b_1\n   2000005     1.00000000E+05   # ~b_2\n   1000006     1.00000000E+05   # ~t_1\n   2000006     1.00000000E+05   # ~t_2\n   1000011     1.00000000E+05   # ~e_L\n   2000011     1.00000000E+05   # ~e_R\n   1000012     1.00000000E+05   # ~nu_eL\n   1000013     1.00000000E+05   # ~mu_L\n   2000013     1.00000000E+05   # ~mu_R\n   1000014     1.00000000E+05   # ~nu_muL\n   1000015     1.00000000E+05   # ~tau_1\n   2000015     1.00000000E+05   # ~tau_2\n   1000016     1.00000000E+05   # ~nu_tauL\n   1000021     1.00000000E+05   # ~g\n   1000022     1.800000e+02            # ~chi_10\n   1000023     2.000000e+02            # ~chi_20\n   1000025     1.00000000E+05   # ~chi_30\n   1000035     1.00000000E+05   # ~chi_40\n   1000024     1.900000e+02            # ~chi_1+\n   1000037     1.00000000E+05   # ~chi_2+\n#\n#\n#\n#         PDG            Width\nDECAY         6     1.134E+00        # top decays\nDECAY   2000006     0.00000000E+00   # stop2 decays\nDECAY   1000005     0.00000000E+00   # sbottom1 decays\nDECAY   2000005     0.00000000E+00   # sbottom2 decays\n#\n#         PDG            Width\nDECAY   1000011     0.00000000E+00   # selectron_L decays\nDECAY   2000011     0.00000000E+00   # selectron_R decays\nDECAY   1000013     0.00000000E+00   # smuon_L decays\nDECAY   2000013     0.00000000E+00   # smuon_R decays\nDECAY   1000015     0.00000000E+00   # stau_1 decays\nDECAY   2000015     0.00000000E+00   # stau_2 decays\n#\n#         PDG            Width\nDECAY   1000012     0.00000000E+00   # snu_elL decays\nDECAY   1000014     0.00000000E+00   # snu_muL decays\nDECAY   1000016     0.00000000E+00   # snu_tauL decays\nDECAY   1000006     0.00000000E+00   # stop1 decays\nDECAY   1000021     0.00000000E+00   # gluino decays\nDECAY   1000022     0.00000000E+00   # neutralino1 decays\nDECAY   1000023     %E   # neutralino2 decays\n    0.00000000E+00   3    1000022   11   -11  #dummy decay\n    1.00000000E+00   2    1000022   23\nDECAY   1000024     %E   # chargino1+ decays\n    0.00000000E+00   3    1000022   12   -11\n    1.00000000E+00   2    1000022   24\n' % (neutralino2_width, neutralino2_width))
         )
 
 #     Filter setup
@@ -191,7 +211,7 @@ genMETfilter2 = cms.EDFilter("CandViewCountFilter",
         )
 
 ## Choose to enable or disable the MET and jet gen-level filters
-#ProductionFilterSequence = cms.Sequence(generator)
-ProductionFilterSequence = cms.Sequence(generator*tmpGenParticles *
-        tmpGenParticlesForJetsNoNu * tmpAk4GenJetsNoNu * genHTFilter *
-        tmpGenMetTrue * genMETfilter1 * genMETfilter2)
+ProductionFilterSequence = cms.Sequence(generator)
+#ProductionFilterSequence = cms.Sequence(generator*tmpGenParticles *
+#        tmpGenParticlesForJetsNoNu * tmpAk4GenJetsNoNu * genHTFilter *
+#        tmpGenMetTrue * genMETfilter1 * genMETfilter2)

@@ -30,7 +30,7 @@ nevent=2000
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc820
 if ! [ -r CMSSW_10_2_3/src ] ; then
     scram p CMSSW CMSSW_10_2_3
 fi
@@ -53,7 +53,7 @@ echo "${LHEDIR}/${namebase}.lhe"
 rm -rf *
 cd ${BASEDIR}
 
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc820
 if ! [ -r CMSSW_10_2_3/src ] ; then
     scram p CMSSW CMSSW_10_2_3
 fi

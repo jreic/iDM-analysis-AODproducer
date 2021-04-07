@@ -31,12 +31,12 @@ SAMPLEDIR=${BASEDIR}/samples
 
 HADRONIZER="externalLHEProducer_and_PYTHIA8_Hadronizer"
 namebase=${GP_f/.tar.xz/}
-nevent=1000
+nevent=25
 
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc820
 if ! [ -r CMSSW_10_2_3/src ] ; then
     scram p CMSSW CMSSW_10_2_3
 fi
@@ -59,7 +59,7 @@ echo "${LHEDIR}/${namebase}.lhe"
 rm -rf *
 cd ${BASEDIR}
 
-export SCRAM_ARCH=slc6_amd64_gcc700
+export SCRAM_ARCH=slc7_amd64_gcc820
 if ! [ -r CMSSW_10_2_3/src ] ; then
     scram p CMSSW CMSSW_10_2_3
 fi
@@ -67,7 +67,7 @@ cd CMSSW_10_2_3/src
 rm -rf *
 mkdir -p Configuration/GenProduction/python/
 
-for ctau_mm in 100
+for ctau_mm in 10
 # 100 1000
 #for ctau_mm in 10
 do

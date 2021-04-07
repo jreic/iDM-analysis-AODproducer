@@ -8,12 +8,13 @@ import os, sys
 def buildSubmit(infile, workpath, mode, uid, year):
     '''A series of actions to prepare submit dir'''
 
+    user = os.getenv("USER")
     stageOutPiece = '''
-remoteDIR="/eos/user/a/asterenb/iDM/Samples"
+remoteDIR="/eos/user/%s/%s/iDM/Samples"
 for f in `ls *AOD*.root`; do
-    cmd="xrdcp -vf file:///$PWD/$f root://eosuser.cern.ch/$remoteDIR/$f"
+    cmd="xrdcp -vf $f root://eosuser.cern.ch/$remoteDIR/$f"
     echo $cmd && eval $cmd
-done'''
+done''' % (user[0], user)
 
     os.makedirs(workpath+'/submit/conf')
     os.system('cp conf/* %s/submit/conf/' % workpath)
@@ -100,10 +101,10 @@ rank = Mips
 request_memory = 4000
 arguments = $(Process)
 +JobFlavour = "tomorrow"
-requirements = (OpSysAndVer =?= "SLCern6")
 #on_exit_hold = (ExitBySignal == True) || (ExitCode != 0)
 +AcctGroup = "analysis"
 +ProjectName = "DarkMatterSimulation"
+x509userproxy = $ENV(X509_USER_PROXY)
 queue {2}'''.format(workpath, logpath, njobs)
     condorFN = 'condor_%s.jdl' % process
 
